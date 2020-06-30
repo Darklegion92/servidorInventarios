@@ -1,7 +1,9 @@
 const pool = require("../config/database");
+const Token = require("../services/index.service");
 
 async function crear(req, res) {
   res.setHeader("Content-Type", "application/json");
+
   const { usuario, password, idRol, asignacion } = req.body;
 
   const nuevoUsuario = {
@@ -14,13 +16,14 @@ async function crear(req, res) {
     const resp = await pool.query("INSERT INTO usuarios SET ? ", [
       nuevoUsuario,
     ]);
-    console.log(resp);
+    const token = Token.createToken(resp);
+    res.status(200).send(token);
   } catch (e) {
     res.status(501).send({ mensaje: "Error: " + e });
   }
 }
 
-async function login(req, res) {
+async function ingresar(req, res) {
   res.setHeader("Content-Type", "application/json");
   const { usuario, password } = req.body.values;
 
@@ -30,8 +33,11 @@ async function login(req, res) {
       [usuario, password]
     );
 
-    if (datos.length > 0) res.status(200).send(datos);
-    else res.status(201).send({ mensaje: "Usuario o Contraseña Incorrectos" });
+    if (datos.length > 0) {
+      const token = Token.createToken(datos);
+      res.status(200).send(token);
+    } else
+      res.status(201).send({ mensaje: "Usuario o Contraseña Incorrectos" });
   } catch (e) {
     res.status(501).send({ mensaje: "Error " + e });
     console.log(e);
@@ -44,6 +50,7 @@ function error(req, res) {
 }
 
 module.exports = {
-  login,
+  ingresar,
+  crear,
   error,
 };

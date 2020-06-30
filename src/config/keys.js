@@ -4,5 +4,6 @@ module.exports ={
         user:'root',
         password:'J1090452931l$.',
         database:'soltec',
-    }
+    },
+    SECRET_TOKEN:"SOLTEC"
 }
