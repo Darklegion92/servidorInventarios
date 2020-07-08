@@ -4,13 +4,16 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
 const passport = require("passport");
-const authRouter = require("./routes/Auth.routes")
-
+const authRouter = require("./routes/Auth.routes");
+const parametrosRouter = require("./routes/Parametros.routes");
+const proveedoresRouter = require("./routes/Proveedores.routes");
+const agrupacionesRouter = require("./routes/Agrupaciones.routes");
+const articulosRouter = require("./routes/Articulos.routes");
 //initializations
 const app = express();
 require("./lib/passport");
 //settings
-app.set("port", process.env.PORT || 3001);
+app.set("port", process.env.PORT || 3002);
 
 //middlewares
 app.use(cors());
@@ -24,6 +27,10 @@ app.use(passport.session());
 
 //Routes
 app.use("/", authRouter);
+app.use("/parametros", parametrosRouter);
+app.use("/proveedores", proveedoresRouter);
+app.use("/agrupaciones", agrupacionesRouter);
+app.use("/articulos", articulosRouter);
 
 //Public
 app.use(express.static(path.join(__dirname, "public")));

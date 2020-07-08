@@ -1,24 +1,23 @@
-const jwt = require('jsonwebtoken')
-const config = require('../config/config')
-const {deleteSession} = require('../query/Session.query')
+const services = require("../services");
 
-async function isAuth(req,res,next){
-    
-    if(!req.headers.token){
-        return res.status(403).send({err: "No Tiene Autorización"})
-    }
+async function isAuth(req, res, next) {
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(403).send({ err: "No Tiene Autorización" });
+  }
 
-    const token =req.headers.token
-    jwt.verify(token, config.SECRET_TOKEN, async (e,payload)=>{
-        if(e){
-            await deleteSession(token,res)
-            return res.status(401).send({err: "El token ha caducado"})
-        }
-        req.user = payload.usr
-        next()
-    })    
+  const decoded = await services.decodeToken(token);
+
+  if (decoded === 500) {
+    res.status(500).send({ mensaje: "Token No valido" });
+  }
+  if (decoded === 401) {
+    res.status(401).send({ mensaje: "Token Caducado" });
+  }
+  req.idusuario = decoded;
+  next();
 }
 
 module.exports = {
-    isAuth
-}
+  isAuth,
+};
