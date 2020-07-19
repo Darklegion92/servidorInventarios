@@ -16,6 +16,53 @@ async function consultartarifasiva(req, res) {
   }
 }
 
+async function consultarnumeroorden(req, res) {
+  res.setHeader("Content-Type", "application/json");
+
+  try {
+    const datos = await pool.query(
+      "SELECT max(idorden_compra) as numero FROM ordenes_compra"
+    );
+
+    if (datos.length > 0) {
+      res.status(200).send({ numero: datos[0].numero });
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+async function consultarnumerofacturacompra(req, res) {
+  res.setHeader("Content-Type", "application/json");
+
+  try {
+    const datos = await pool.query(
+      "SELECT max(idfactura_compra) as numero FROM facturas_compra"
+    );
+
+    if (datos.length > 0) {
+      res.status(200).send({ numero: datos[0].numero });
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+
+async function consultarnumerofacturaventa(req, res) {
+  res.setHeader("Content-Type", "application/json");
+
+  try {
+    const datos = await pool.query("SELECT * FROM numeracion");
+    if (datos.length > 0) {
+      res.status(200).send(datos[0]);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+  }
+}
+
 async function consultarlistasprecios(req, res) {
   res.setHeader("Content-Type", "application/json");
 
@@ -252,5 +299,8 @@ module.exports = {
   crearlistasprecios,
   consultarregimenes,
   consultartiposdocumento,
+  consultarnumeroorden,
+  consultarnumerofacturacompra,
+  consultarnumerofacturaventa,
   error,
 };

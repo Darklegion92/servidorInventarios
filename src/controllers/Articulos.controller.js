@@ -20,6 +20,106 @@ async function consultar(req, res) {
   }
 }
 
+async function consultarOrden(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { tipo, dato } = req.params;
+
+  try {
+    let sql;
+    if (tipo === "codigo") {
+      sql =
+        "SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND a.codigo = '" +
+        dato +
+        "'";
+    } else {
+      sql =
+        "SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND a.descripcion LIKE '%" +
+        dato +
+        "%'";
+    }
+    const datos = await pool.query(sql);
+
+    if (datos.length > 0) {
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+
+async function consultarVentas(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { tipo, dato, idlistaprecios } = req.params;
+
+  try {
+    let sql;
+    if (tipo === "codigo") {
+      sql =
+        "SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = " +
+        idlistaprecios +
+        " AND a.codigo = '" +
+        dato +
+        "'";
+    } else {
+      sql =
+        "SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = " +
+        idlistaprecios +
+        " AND a.descripcion LIKE '%" +
+        dato +
+        "%'";
+    }
+    const datos = await pool.query(sql);
+    if (datos.length > 0) {
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+
+async function consultarParametros(req, res) {
+  res.setHeader("Content-Type", "application/json");
+
+  const { tipo, dato } = req.params;
+  console.log(req.params);
+  try {
+    let sql;
+    if (tipo === "codigo") {
+      sql =
+        "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+        "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+        "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+        "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 AND a.codigo LIKE'%" +
+        dato +
+        "%'";
+    }
+
+    if (tipo === "descripcion") {
+      sql =
+        "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+        "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+        "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+        "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 AND a.descripcion LIKE '%" +
+        dato +
+        "%'";
+    }
+
+    const datos = await pool.query(sql);
+    if (datos.length > 0) {
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+
 async function consultarPrecios(req, res) {
   res.setHeader("Content-Type", "application/json");
 
@@ -55,10 +155,13 @@ async function editar(req, res) {
     idarticulo,
   } = req.body;
 
+  const { idusuario } = req;
+  const fechacreacion = new Date();
+
   try {
     let datos = await pool.query(
-      "UPDATE aritulos SET idtipo_documento=?, documento=?,razonsocial=?, nombres=?,apellidos=?," +
-        "direccion=?,telefono=?,correo=?,idregimen=? WHERE idproveedor=?",
+      "UPDATE articulos SET descripcion=?, codigo=?,idtarifaiva=?, idgrupo=?,idsubgrupo=?,idmarca=?," +
+        "estado=? WHERE idarticulo=?",
       [
         descripcion,
         codigo,
@@ -72,8 +175,31 @@ async function editar(req, res) {
     );
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query("SELECT * FROM proveedores");
-      res.status(200).send(datos);
+      await precios.map(async (precio) => {
+        if (precio.editado) {
+          datos = await pool.query(
+            "UPDATE precios SET valor=?, idusuario=?, fechacreacion=? WHERE idprecio=?",
+            [precio.valor, idusuario, fechacreacion, precio.id]
+          );
+        } else {
+          datos = await pool.query("INSERT INTO precios VALUES ?", {
+            idlistaprecios: precio.id,
+            valor: precio.valor,
+            idarticulo: idarticulo,
+            idusuario: idusuario,
+            fechacreacion: fechacreacion,
+          });
+        }
+      });
+      if (datos.affectedRows > 0) {
+        datos = await pool.query(
+          "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+            "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+            "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+            "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1"
+        );
+        res.status(200).send(datos);
+      } else res.status(201).send({ mensaje: "No Se Actualizo Precios" });
     } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
     res.status(501).send({ mensaje: "Error " + e });
@@ -142,8 +268,11 @@ function error(req, res) {
 
 module.exports = {
   consultar,
+  consultarParametros,
   editar,
   crear,
   consultarPrecios,
+  consultarOrden,
+  consultarVentas,
   error,
 };

@@ -5,8 +5,8 @@ async function consultar(req, res) {
 
   try {
     const datos = await pool.query(
-      "SELECT p.*, t.prefijo,p.documento, r.nombre FROM proveedores p, tipos_documento t, regimenes r WHERE t.idtipo_documento = p.idtipo_documento " +
-        "AND r.idregimen= p.idregimen;"
+      "SELECT c.*, t.prefijo,c.documento, l.nombre FROM clientes c, tipos_documento t, listasprecios l WHERE t.idtipo_documento = c.idtipo_documento " +
+        "AND l.idlistaprecios= c.idlistaprecios"
     );
 
     if (datos.length > 0) {
@@ -25,8 +25,8 @@ async function consultarDocumento(req, res) {
 
   try {
     const datos = await pool.query(
-      "SELECT p.*, t.prefijo,p.documento, r.nombre FROM proveedores p, tipos_documento t, regimenes r WHERE t.idtipo_documento = p.idtipo_documento " +
-        "AND r.idregimen= p.idregimen AND p.documento='" +
+      "SELECT c.*, t.prefijo, l.nombre FROM listasprecios l,clientes c, tipos_documento t WHERE t.idtipo_documento = c.idtipo_documento " +
+        "AND c.idlistaprecios= l.idlistaprecios AND c.documento='" +
         documento +
         "'"
     );
@@ -47,18 +47,18 @@ async function consultarParametros(req, res) {
   let sql;
   if (tipo === "documento") {
     sql =
-      "SELECT p.*, t.prefijo,p.documento, r.nombre FROM proveedores p, tipos_documento t, regimenes r WHERE t.idtipo_documento = p.idtipo_documento " +
-      "AND r.idregimen= p.idregimen AND p.documento like '%" +
+      "SELECT c.*, t.prefijo, l.nombre FROM clientes c, tipos_documento t,listasprecios l WHERE t.idtipo_documento = c.idtipo_documento " +
+      "AND l.idlistaprecios= c.idlistaprecios AND c.documento like '%" +
       dato +
       "%'";
   }
 
   if (tipo === "nombre") {
     sql =
-      "SELECT p.*, t.prefijo,p.documento, r.nombre FROM proveedores p, tipos_documento t, regimenes r WHERE t.idtipo_documento = p.idtipo_documento " +
-      "AND r.idregimen= p.idregimen AND (p.nombres like '%" +
+      "SELECT c.*, t.prefijo, l.nombre FROM clientes c, tipos_documento t,listasprecios l WHERE t.idtipo_documento = c.idtipo_documento " +
+      "AND l.idlistaprecios= c.idlistaprecios AND (c.nombres like '%" +
       dato +
-      "%' OR p.apellidos like '%" +
+      "%' OR c.apellidos like '%" +
       dato +
       "%')";
   }
@@ -79,38 +79,34 @@ async function editar(req, res) {
   res.setHeader("Content-Type", "application/json");
 
   const {
-    idproveedor,
+    idcliente,
     idtipo_documento,
     documento,
-    razonsocial,
     nombres,
     apellidos,
     direccion,
     telefono,
-    correo,
-    idregimen,
+    idlistaprecios,
   } = req.body;
 
   try {
     let datos = await pool.query(
-      "UPDATE proveedores SET idtipo_documento=?, documento=?,razonsocial=?, nombres=?,apellidos=?," +
-        "direccion=?,telefono=?,correo=?,idregimen=? WHERE idproveedor=?",
+      "UPDATE clientes SET idtipo_documento=?, documento=?,nombres=?,apellidos=?," +
+        "direccion=?,telefono=?,idlistaprecios=? WHERE idcliente=?",
       [
         idtipo_documento,
         documento,
-        razonsocial,
         nombres,
         apellidos,
         direccion,
         telefono,
-        correo,
-        idregimen,
-        idproveedor,
+        idlistaprecios.key,
+        idcliente,
       ]
     );
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query("SELECT * FROM proveedores");
+      datos = await pool.query("SELECT * FROM clientes");
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
@@ -122,38 +118,33 @@ async function editar(req, res) {
 async function crear(req, res) {
   res.setHeader("Content-Type", "application/json");
   const {
-    idproveedor,
     idtipo_documento,
     documento,
-    razonsocial,
     nombres,
     apellidos,
     direccion,
     telefono,
-    idregimen,
-    correo,
+    idlistaprecios,
   } = req.body;
+
   const { idusuario } = req;
   const fechacreacion = new Date();
 
   try {
-    let datos = await pool.query("INSERT INTO proveedores SET ?", {
-      idproveedor,
+    let datos = await pool.query("INSERT INTO clientes SET ?", {
       idtipo_documento,
       documento,
-      razonsocial,
       nombres,
       apellidos,
       direccion,
       telefono,
-      correo,
+      idlistaprecios,
       idusuario,
-      idregimen,
       fechacreacion,
     });
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query("SELECT * FROM proveedores");
+      datos = await pool.query("SELECT * FROM clientes");
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {

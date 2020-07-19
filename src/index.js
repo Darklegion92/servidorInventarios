@@ -9,6 +9,11 @@ const parametrosRouter = require("./routes/Parametros.routes");
 const proveedoresRouter = require("./routes/Proveedores.routes");
 const agrupacionesRouter = require("./routes/Agrupaciones.routes");
 const articulosRouter = require("./routes/Articulos.routes");
+const ordenesRouter = require("./routes/Ordenes.routes");
+const facturasCompraRouter = require("./routes/FacturasCompra.routes");
+const facturasVentaRouter = require("./routes/FacturasVenta.routes");
+const clientesRouter = require("./routes/Clientes.routes");
+
 //initializations
 const app = express();
 require("./lib/passport");
@@ -31,7 +36,10 @@ app.use("/parametros", parametrosRouter);
 app.use("/proveedores", proveedoresRouter);
 app.use("/agrupaciones", agrupacionesRouter);
 app.use("/articulos", articulosRouter);
-
+app.use("/ordenes", ordenesRouter);
+app.use("/facturascompra", facturasCompraRouter);
+app.use("/facturasventa", facturasVentaRouter);
+app.use("/clientes", clientesRouter);
 //Public
 app.use(express.static(path.join(__dirname, "public")));
 //Starting the server

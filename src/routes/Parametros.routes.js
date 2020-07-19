@@ -5,6 +5,17 @@ const ParametrosCtrl = require("../controllers/Parametros.controller");
 router = Router();
 router
   .get("/tarifasiva", Auth.isAuth, ParametrosCtrl.consultartarifasiva)
+  .get("/ordenes/numero", Auth.isAuth, ParametrosCtrl.consultarnumeroorden)
+  .get(
+    "/facturasventa/numero",
+    Auth.isAuth,
+    ParametrosCtrl.consultarnumerofacturaventa
+  )
+  .get(
+    "/facturascompra/numero",
+    Auth.isAuth,
+    ParametrosCtrl.consultarnumerofacturacompra
+  )
   .get("/listasprecios", Auth.isAuth, ParametrosCtrl.consultarlistasprecios)
   .get("/numeracion", Auth.isAuth, ParametrosCtrl.consultarnumeracion)
   .get("/tiposdocumento", Auth.isAuth, ParametrosCtrl.consultartiposdocumento)
