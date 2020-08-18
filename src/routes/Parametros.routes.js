@@ -16,6 +16,7 @@ router
     Auth.isAuth,
     ParametrosCtrl.consultarnumerofacturacompra
   )
+  .get("/informes/facturacion", Auth.isAuth, ParametrosCtrl.informesFacturacion)
   .get("/listasprecios", Auth.isAuth, ParametrosCtrl.consultarlistasprecios)
   .get("/numeracion", Auth.isAuth, ParametrosCtrl.consultarnumeracion)
   .get("/tiposdocumento", Auth.isAuth, ParametrosCtrl.consultartiposdocumento)
