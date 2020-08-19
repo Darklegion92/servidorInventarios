@@ -26,7 +26,7 @@ async function articulos(req, res) {
             "f.fechacreacion AS registro " +
             "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
             "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
-            "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<?";
+            "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? GROUP by a.codigo";
           parametros = [
             fechaI.getFullYear() +
               "/" +
@@ -51,7 +51,7 @@ async function articulos(req, res) {
           "f.fechacreacion AS registro " +
           "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
           "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
-          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=?";
+          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=? GROUP by a.codigo";
         parametros = [
           fechaI.getFullYear() +
             "/" +
@@ -76,7 +76,7 @@ async function articulos(req, res) {
           "f.fechacreacion AS registro " +
           "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
           "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
-          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=? AND s.idsubgrupo=?";
+          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=? AND s.idsubgrupo=? GROUP by a.codigo"
         parametros = [
           fechaI.getFullYear() +
             "/" +
