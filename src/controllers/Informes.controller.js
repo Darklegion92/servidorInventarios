@@ -18,7 +18,7 @@ async function articulos(req, res) {
             "SUM(d.cantidadarticulo*d.valorarticulo) AS valor, g.nombre AS grupo, s.nombre AS subgrupo, m.nombre AS marca, " +
             "f.fechacreacion AS registro " +
             "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
-            "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND a.idgrupo = a.idarticulo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
+            "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
             "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<?";
           parametros = [
             fechaI.getFullYear() +
@@ -43,7 +43,7 @@ async function articulos(req, res) {
           "SUM(d.cantidadarticulo*d.valorarticulo) AS valor, g.nombre AS grupo, s.nombre AS subgrupo, m.nombre AS marca, " +
           "f.fechacreacion AS registro " +
           "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
-          "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND a.idgrupo = a.idarticulo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
+          "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
           "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=?";
         parametros = [
           fechaI.getFullYear() +
@@ -68,8 +68,8 @@ async function articulos(req, res) {
           "SUM(d.cantidadarticulo*d.valorarticulo) AS valor, g.nombre AS grupo, s.nombre AS subgrupo, m.nombre AS marca, " +
           "f.fechacreacion AS registro " +
           "FROM factura_venta_detalles d, grupos g, subgrupos s, marcas m, articulos a, facturas_venta f " +
-          "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND a.idgrupo = a.idarticulo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
-          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=? AND s.idsubgrupo";
+          "WHERE f.idfactura_venta = d.idfactura_venta AND  d.codigoarticulo = a.codigo AND g.idgrupo = s.idgrupo AND a.idsubgrupo = s.idsubgrupo " +
+          "AND m.idmarca = a.idmarca AND f.fechacreacion>=? AND f.fechacreacion<? AND g.idgrupo=? AND s.idsubgrupo=?";
         parametros = [
           fechaI.getFullYear() +
             "/" +
