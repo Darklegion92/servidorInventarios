@@ -6,7 +6,14 @@ async function articulos(req, res) {
   const { idgrupo, idsubgrupo, fechainicial, fechafinal } = req.query;
   const fechaI = new Date(fechainicial);
   const fechaF = new Date(fechafinal);
-  console.log(fechaI.getFullYear());
+  console.log(
+    fechaI.getFullYear() +
+      "/" +
+      (fechaI.getMonth() + 1) +
+      "/" +
+      fechaI.getDate() +
+      " 00:00:00"
+  );
   try {
     let sql = "";
     let parametros = {};
