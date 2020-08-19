@@ -4,9 +4,11 @@ async function articulos(req, res) {
   res.setHeader("Content-Type", "application/json");
   const { tipo } = req.params;
   const { idgrupo, idsubgrupo, fechainicial, fechafinal } = req.query;
-  const fechacreacion = new Date();
   const fechaI = new Date(fechainicial);
   const fechaF = new Date(fechafinal);
+
+  console.log(fechainicial);
+  console.log(fechaI);
   try {
     let sql = "";
     let parametros = {};
