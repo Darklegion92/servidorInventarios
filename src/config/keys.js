@@ -1,9 +1,9 @@
-module.exports ={
-    database:{
-        host:'localhost',
-        user:'root',
-        password:'J1090452931l$.',
-        database:'soltec',
+module.exports = {
+    database: {
+        host: 'localhost',
+        user: 'root',
+        password: '1234',
+        database: 'soltec',
     },
-    SECRET_TOKEN:"SOLTEC"
+    SECRET_TOKEN: "SOLTEC"
 }
