@@ -54,6 +54,31 @@ async function consultarnumeroorden(req, res) {
     console.log(e);
   }
 }
+
+async function consultarbodegas(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  try {
+    const { idsucursal } = req.params;
+
+    let sql = "SELECT * FROM bodegas order by estado";
+
+    if (idsucursal) {
+      sql =
+        "SELECT * FROM bodegas WHERE idsucursal=" +
+        idsucursal +
+        " order by estado";
+    }
+    const datos = await pool.query(sql);
+
+    if (datos.length > 0) {
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
+  } catch (e) {
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
+  }
+}
+
 async function consultarnumerofacturacompra(req, res) {
   res.setHeader("Content-Type", "application/json");
 
@@ -311,6 +336,7 @@ function error(req, res) {
 
 module.exports = {
   consultarnumeracion,
+  consultarbodegas,
   consultartarifasiva,
   consultarlistasprecios,
   editarnumeracion,

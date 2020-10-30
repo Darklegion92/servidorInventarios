@@ -5,6 +5,7 @@ const ParametrosCtrl = require("../controllers/Parametros.controller");
 router = Router();
 router
   .get("/tarifasiva", Auth.isAuth, ParametrosCtrl.consultartarifasiva)
+  .get("/bodegas", Auth.isAuth, ParametrosCtrl.consultarbodegas)
   .get("/ordenes/numero", Auth.isAuth, ParametrosCtrl.consultarnumeroorden)
   .get(
     "/facturasventa/numero",

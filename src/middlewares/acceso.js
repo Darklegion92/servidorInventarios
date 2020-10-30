@@ -4,6 +4,7 @@ async function isAuth(req, res, next) {
   res.setHeader("Content-Type", "application/json");
   try {
     const token = req.headers.authorization;
+    
     if (!token) {
       return res.status(403).send({ err: "No Tiene Autorización" });
     }
@@ -18,7 +19,7 @@ async function isAuth(req, res, next) {
       next();
     }
   } catch (e) {
-    return res.status(403).send({ err: "No Tiene Autorización" });
+    return res.status(501).send({ err: "Ha sucedido un error" });
   }
 }
 
