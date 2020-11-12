@@ -20,16 +20,17 @@ async function crear(req, res) {
       articulos.forEach(async (articulo) => {
         datos = await pool.query(
           "INSERT INTO factura_venta_detalles (codigoarticulo,descripcionarticulo," +
-            "cantidadarticulo,valorarticulo,ivaarticulo,idtarifaiva,idfactura_venta)" +
-            "values(?,?,?,?,?,?,?)",
+            "cantidadarticulo,valorarticulo,ivaarticulo,idtarifaiva,idfactura_venta,idbodega)" +
+            "values(?,?,?,?,?,?,?,(SELECT id FROM bodegas WHERE idsucursal = (select idsucursal from usuarios where idusuario=?)))",
           [
             articulo.codigoarticulo,
             articulo.descripcionarticulo,
             articulo.cantidadarticulo,
-            parseFloat(articulo.valorarticulo.replace(".","")),
+            parseFloat(articulo.valorarticulo.replace(".", "")),
             parseFloat(articulo.ivaarticulo) / articulo.cantidadarticulo,
             articulo.idtarifaiva,
             idfactura_venta,
+            idusuario,
           ]
         );
       });
@@ -54,11 +55,11 @@ async function devoluciones(req, res) {
   try {
     await articulos.forEach(async (articulo) => {
       const idfactura_venta_detalle = articulo;
-      datos = await pool.query("INSERT INTO devoluciones_ventas SET ?", {
-        idfactura_venta_detalle,
-        idusuario,
-        fechacreacion,
-      });
+      datos = await pool.query(
+        "INSERT INTO devoluciones_ventas(idfactura_venta_detalle,idusuario,fechacreacion,idbodega)" +
+          " VALUE(?,?,?,(SELECT id FROM bodegas WHERE idsucursal = (select idsucursal from usuarios where idusuario=?)))",
+        [idfactura_venta_detalle, idusuario, fechacreacion, idusuario]
+      );
     });
     res.status(200).send({
       mensaje: "Se han devuelto los artículos",
@@ -101,9 +102,10 @@ async function ventasDia(req, res) {
 
   try {
     const datos = await pool.query(
-      "SELECT SUM(d.cantidadarticulo*d.valorarticulo) as total FROM factura_venta_detalles d, facturas_venta f "+
-      "WHERE f.idfactura_venta = d.idfactura_venta AND f.fechacreacion>=CURDATE()");
-    console.log(datos)
+      "SELECT SUM(d.cantidadarticulo*d.valorarticulo) as total FROM factura_venta_detalles d, facturas_venta f " +
+        "WHERE f.idfactura_venta = d.idfactura_venta AND f.fechacreacion>=CURDATE()"
+    );
+    console.log(datos);
     if (datos[0]) {
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Encontraron Valores" });

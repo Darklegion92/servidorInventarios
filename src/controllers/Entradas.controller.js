@@ -2,45 +2,44 @@ const pool = require("../config/database");
 
 async function crear(req, res) {
   res.setHeader("Content-Type", "application/json");
-  const { datos, idbodega, observacion } = req.body;
+  const { articulos, idbodega, observacion } = req.body;
   const { idusuario } = req;
   const fechacreacion = new Date();
-
   try {
-    let datos = await pool.query("INSERT INTO facturas_venta SET ?", {
-      idcliente,
+    let datos = await pool.query("INSERT INTO entradas SET ?", {
       idusuario,
-      numero,
-      prefijo,
       fechacreacion,
+      estado: 1,
     });
 
     if (datos.affectedRows > 0) {
-      const idfactura_venta = datos.insertId;
+      const identrada = datos.insertId;
       articulos.forEach(async (articulo) => {
         datos = await pool.query(
-          "INSERT INTO factura_venta_detalles (codigoarticulo,descripcionarticulo," +
-            "cantidadarticulo,valorarticulo,ivaarticulo,idtarifaiva,idfactura_venta)" +
-            "values(?,?,?,?,?,?,?)",
+          "INSERT INTO entradas_detalle (codigoarticulo,descripcionarticulo," +
+            "cantidadarticulo,valorarticulo,ivaarticulo,idtarifaiva,identrada,idbodega)" +
+            "value(?,?,?,?,?,(select idtarifaiva from articulos where codigo=?),?,?)",
           [
             articulo.codigoarticulo,
             articulo.descripcionarticulo,
             articulo.cantidadarticulo,
-            parseFloat(articulo.valorarticulo.replace(".", "")),
-            parseFloat(articulo.ivaarticulo) / articulo.cantidadarticulo,
-            articulo.idtarifaiva,
-            idfactura_venta,
+            parseFloat(articulo.valorarticulo),
+            0,
+            articulo.codigoarticulo,
+            identrada,
+            idbodega,
           ]
         );
       });
 
       if (datos.affectedRows > 0) {
         res.status(200).send({
-          mensaje: "Factura Creada Correctamente No. " + idfactura_venta,
+          mensaje: "Factura Creada Correctamente No. " + identrada,
         });
       }
     } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
+    console.log(e);
     res.status(501).send({ mensaje: "Error " + e });
   }
 }

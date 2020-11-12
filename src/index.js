@@ -14,6 +14,7 @@ const facturasCompraRouter = require("./routes/FacturasCompra.routes");
 const facturasVentaRouter = require("./routes/FacturasVenta.routes");
 const clientesRouter = require("./routes/Clientes.routes");
 const informesRouter = require("./routes/Informes.routes");
+const entradasRouter = require("./routes/Entradas.routes");
 const { isAuth } = require("./middlewares/acceso");
 
 //initializations
@@ -43,9 +44,7 @@ app.use("/facturascompra", facturasCompraRouter);
 app.use("/facturasventa", facturasVentaRouter);
 app.use("/clientes", clientesRouter);
 app.use("/informes", informesRouter);
-app.use("/", isAuth, (req, res) => {
-  res.status(200).send({ mensaje: "tokenValido" });
-});
+app.use("/entradas", entradasRouter);
 
 //Public
 app.use(express.static(path.join(__dirname, "public")));
