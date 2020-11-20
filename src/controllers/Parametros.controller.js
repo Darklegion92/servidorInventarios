@@ -204,6 +204,26 @@ async function editartarifasiva (req, res) {
   }
 }
 
+async function editarbodega (req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const { nombre, id } = req.body
+  console.log(req.body)
+  try {
+    let datos = await pool.query('UPDATE bodegas SET nombre=? WHERE id=?', [
+      nombre,
+      id
+    ])
+
+    if (datos.affectedRows > 0) {
+      datos = await pool.query('SELECT * FROM bodegas')
+      res.status(200).send(datos)
+    } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
+  } catch (e) {
+    res.status(501).send({ mensaje: 'Error ' + e })
+    console.log(e)
+  }
+}
+
 async function editarlistasprecios (req, res) {
   res.setHeader('Content-Type', 'application/json')
   const { nombre, idlistaprecios } = req.body
@@ -277,6 +297,29 @@ async function creartarifasiva (req, res) {
 
     if (datos.affectedRows > 0) {
       datos = await pool.query('SELECT * FROM tarifasiva')
+      res.status(200).send(datos)
+    } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
+  } catch (e) {
+    res.status(501).send({ mensaje: 'Error ' + e })
+    console.log(e)
+  }
+}
+
+async function crearbodega (req, res) {
+  res.setHeader('Content-Type', 'application/json')
+  const { nombre } = req.body
+  const { idusuario } = req
+  const fechacreacion = new Date()
+
+  try {
+    let datos = await pool.query('INSERT INTO bodegas SET ?', {
+      nombre,
+      idusuario,
+      fechacreacion
+    })
+
+    if (datos.affectedRows > 0) {
+      datos = await pool.query('SELECT * FROM bodegas')
       res.status(200).send(datos)
     } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
   } catch (e) {
@@ -366,5 +409,7 @@ module.exports = {
   consultarnumerofacturacompra,
   consultarnumerofacturaventa,
   informesFacturacion,
+  editarbodega,
+  crearbodega,
   error
 }
