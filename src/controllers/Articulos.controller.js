@@ -8,7 +8,7 @@ async function consultar(req, res) {
       "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
         "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
         "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
-        "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1"
+        "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 order by a.descripcion"
     );
 
     if (datos.length > 0) {

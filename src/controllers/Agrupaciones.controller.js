@@ -71,16 +71,19 @@ async function editarlistasprecios(req, res) {
 
 async function editarsubgrupos(req, res) {
   res.setHeader("Content-Type", "application/json");
-  const { idsubgrupo, nombre } = req.body;
+  const { idsubgrupo, nombre, idgrupo } = req.body;
 
   try {
     let datos = await pool.query(
-      "UPDATE subgrupos SET nombre=?   WHERE idsubgRupo=?",
+      "UPDATE subgrupos SET nombre=? WHERE idsubgRupo=?",
       [nombre, idsubgrupo]
     );
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query("SELECT * FROM subgrupos");
+      datos = await pool.query(
+        "SELECT s.*, g.nombre as nombregrupo FROM subgrupos s, grupos g WHERE g.idgrupo=s.idgrupo AND s.idgrupo=?",
+        [idgrupo]
+      );
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
@@ -104,7 +107,11 @@ async function crearsubgrupos(req, res) {
     });
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query("SELECT * FROM subgrupos");
+      datos = await pool.query(
+        "SELECT s.*, g.nombre as nombregrupo FROM subgrupos s, grupos g WHERE g.idgrupo=s.idgrupo AND s.idgrupo=?"[
+          idgrupo
+        ]
+      );
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Creo El Campo" });
   } catch (e) {
