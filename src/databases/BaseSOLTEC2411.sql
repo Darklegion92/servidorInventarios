@@ -125,15 +125,15 @@ CREATE TABLE `articulos` (
 -- Estructura de tabla para la tabla `bodegas`
 --
 
-CREATE TABLE `bodegas` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(20) NOT NULL,
-  `estado` tinyint(1) NOT NULL DEFAULT 1,
-  `idsucursal` int(11) NOT NULL,
-  `principal` tinyint(1) NOT NULL DEFAULT 0,
-  `idusuario` int(11) DEFAULT NULL,
-  `fechacreacion` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  CREATE TABLE `bodegas` (
+    `id` int(11) NOT NULL,
+    `nombre` varchar(20) NOT NULL,
+    `estado` tinyint(1) NOT NULL DEFAULT 1,
+    `idsucursal` int(11) NOT NULL,
+    `principal` tinyint(1) NOT NULL DEFAULT 0,
+    `idusuario` int(11) DEFAULT NULL,
+    `fechacreacion` datetime NOT NULL DEFAULT current_timestamp()
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -418,14 +418,14 @@ CREATE TABLE `grupos` (
 -- Estructura de tabla para la tabla `inventario`
 --
 
-CREATE TABLE `inventario` (
-  `idinventario` int(11) NOT NULL,
-  `idarticulo` int(11) NOT NULL,
-  `cantidad` double NOT NULL,
-  `costopromedio` double NOT NULL,
-  `ultimocosto` double NOT NULL,
-  `idbodega` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    CREATE TABLE `inventario` (
+      `idinventario` int(11) NOT NULL,
+      `idarticulo` int(11) NOT NULL,
+      `cantidad` double NOT NULL,
+      `costopromedio` double NOT NULL,
+      `ultimocosto` double NOT NULL,
+      `idbodega` int(11) NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -733,9 +733,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`idusuario`, `usuario`, `password`, `idRol`, `asignacion`, `fechacreacion`, `idsucursal`) VALUES
-(1, 'ADMIN', '1234', 1, 'ADMINISTRADOR DEL SISTEMA', '2020-06-29 00:00:00', 1),
-(11, 'PRUEBA', '1234', 1, 'PRUEBAS PARA HOY NO', '2020-11-12 14:14:58', 1),
-(12, 'PRUEBA 2', '1234', 1, 'NO HAY NADA', '2020-11-12 14:32:34', 1);
+(1, 'ADMIN', '1234', 1, 'ADMINISTRADOR DEL SISTEMA', '2020-06-29 00:00:00', 1);
 
 --
 -- Índices para tablas volcadas
