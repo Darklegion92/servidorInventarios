@@ -108,9 +108,8 @@ async function crearsubgrupos(req, res) {
 
     if (datos.affectedRows > 0) {
       datos = await pool.query(
-        "SELECT s.*, g.nombre as nombregrupo FROM subgrupos s, grupos g WHERE g.idgrupo=s.idgrupo AND s.idgrupo=?"[
-          idgrupo
-        ]
+        "SELECT s.*, g.nombre as nombregrupo FROM subgrupos s, grupos g WHERE g.idgrupo=s.idgrupo AND s.idgrupo=?",
+        [idgrupo]
       );
       res.status(200).send(datos);
     } else res.status(201).send({ mensaje: "No Se Creo El Campo" });
