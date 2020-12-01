@@ -1,10 +1,10 @@
 const pool = require('../config/database')
 
-async function crear (req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  const { idcliente, numero, prefijo, articulos } = req.body
-  const { idusuario } = req
-  const fechacreacion = new Date()
+async function crear(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { idcliente, numero, prefijo, articulos, recibido } = req.body;
+  const { idusuario } = req;
+  const fechacreacion = new Date();
 
   try {
     let datos = await pool.query('INSERT INTO facturas_venta SET ?', {
@@ -12,8 +12,9 @@ async function crear (req, res) {
       idusuario,
       numero,
       prefijo,
-      fechacreacion
-    })
+      fechacreacion,
+      recibido,
+    });
 
     if (datos.affectedRows > 0) {
       const idfactura_venta = datos.insertId
@@ -37,8 +38,9 @@ async function crear (req, res) {
 
       if (datos.affectedRows > 0) {
         res.status(200).send({
-          mensaje: 'Factura Creada Correctamente No. ' + idfactura_venta
-        })
+          mensaje: "Factura Creada Correctamente No. " + numero,
+          numero: numero,
+        });
       }
     } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
   } catch (e) {
@@ -70,19 +72,16 @@ async function devoluciones (req, res) {
   }
 }
 
-async function consultarNumero (req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  const { numero } = req.params
-
+async function consultarNumero(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { numero, prefijo } = req.query;
+  console.log(req.body);
   try {
     const datos = await pool.query(
       "SELECT f.*, concat(c.nombres,' ',c.apellidos) AS nombre, c.documento FROM facturas_venta f, clientes c " +
-        'WHERE c.idcliente = f.idcliente AND iddevolucion_ventas is null AND  ?',
-      {
-        numero
-      }
-    )
-
+        "WHERE c.idcliente = f.idcliente AND iddevolucion_ventas is null AND  prefijo=? AND numero=?",
+      [prefijo, numero]
+    );
     if (datos[0]) {
       const articulos = await pool.query(
         'SELECT *, cantidadarticulo * valorarticulo as total FROM factura_venta_detalles d WHERE idfactura_venta = ?',

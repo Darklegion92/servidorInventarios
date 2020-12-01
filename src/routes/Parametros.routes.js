@@ -27,10 +27,12 @@ router
   .put('/listasprecios/editar', Auth.isAuth, ParametrosCtrl.editarlistasprecios)
   .put('/numeracion/editar', Auth.isAuth, ParametrosCtrl.editarnumeracion)
   .put('/bodegas', Auth.isAuth, ParametrosCtrl.editarbodega)
+  .put('/sucursales', Auth.isAuth, ParametrosCtrl.editarsucursal)
   .post('/tarifasiva/crear', Auth.isAuth, ParametrosCtrl.creartarifasiva)
   .post('/listasprecios/crear', Auth.isAuth, ParametrosCtrl.crearlistasprecios)
   .post('/numeracion/crear', Auth.isAuth, ParametrosCtrl.crearnumeracion)
   .post('/bodegas', Auth.isAuth, ParametrosCtrl.crearbodega)
+  .post('/sucursales', Auth.isAuth, ParametrosCtrl.crearsucursal)
   .get('/*', ParametrosCtrl.error)
 
 module.exports = router

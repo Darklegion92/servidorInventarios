@@ -88,7 +88,7 @@ async function editar(req, res) {
     telefono,
     idlistaprecios,
   } = req.body;
-
+  console.log(idlistaprecios);
   try {
     let datos = await pool.query(
       "UPDATE clientes SET idtipo_documento=?, documento=?,nombres=?,apellidos=?," +
@@ -100,7 +100,7 @@ async function editar(req, res) {
         apellidos,
         direccion,
         telefono,
-        idlistaprecios.key,
+        idlistaprecios,
         idcliente,
       ]
     );

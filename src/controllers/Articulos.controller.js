@@ -1,147 +1,146 @@
-const pool = require('../config/database')
+const pool = require("../config/database");
 
-async function consultar (req, res) {
-  res.setHeader('Content-Type', 'application/json')
+async function consultar(req, res) {
+  res.setHeader("Content-Type", "application/json");
 
   try {
     const datos = await pool.query(
-      'SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor ' +
-        'FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p ' +
-        'WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND ' +
-        't.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1'
-    )
+      "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+        "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+        "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+        "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 order by a.descripcion"
+    );
 
     if (datos.length > 0) {
-      res.status(200).send(datos)
-    } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function consultarOrden (req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  const { tipo, dato } = req.params
-
+async function consultarOrden(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { tipo, dato } = req.params;
   try {
-    let sql
-    if (tipo === 'codigo') {
+    let sql;
+    if (tipo === "codigo") {
       sql =
-        'SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t ' +
+        "SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t " +
         "WHERE t.idtarifaiva = a.idtarifaiva AND a.codigo = '" +
         dato +
-        "'"
+        "'";
     } else {
       sql =
-        'SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t ' +
+        "SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t " +
         "WHERE t.idtarifaiva = a.idtarifaiva AND a.descripcion LIKE '%" +
         dato +
-        "%'"
+        "%'";
     }
-    const datos = await pool.query(sql)
+    const datos = await pool.query(sql);
 
     if (datos.length > 0) {
-      res.status(200).send(datos)
-    } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function consultarVentas (req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  const { tipo, dato, idlistaprecios } = req.params
+async function consultarVentas(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const { tipo, dato, idlistaprecios } = req.params;
 
   try {
-    let sql
-    if (tipo === 'codigo') {
+    let sql;
+    if (tipo === "codigo") {
       sql =
-        'SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p ' +
-        'WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = ' +
+        "SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = " +
         idlistaprecios +
         " AND a.codigo = '" +
         dato +
-        "'"
+        "'";
     } else {
       sql =
-        'SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p ' +
-        'WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = ' +
+        "SELECT a.*, t.tarifa as tarifa,p.valor as valor FROM articulos a, tarifasiva t, precios p " +
+        "WHERE t.idtarifaiva = a.idtarifaiva AND p.idarticulo = a.idarticulo AND p.idlistaprecios = " +
         idlistaprecios +
         " AND a.descripcion LIKE '%" +
         dato +
-        "%'"
+        "%'";
     }
-    const datos = await pool.query(sql)
+    const datos = await pool.query(sql);
     if (datos.length > 0) {
-      res.status(200).send(datos)
-    } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function consultarParametros (req, res) {
-  res.setHeader('Content-Type', 'application/json')
+async function consultarParametros(req, res) {
+  res.setHeader("Content-Type", "application/json");
 
-  const { tipo, dato } = req.params
-  console.log(req.params)
+  const { tipo, dato } = req.params;
+  console.log(req.params);
   try {
-    let sql
-    if (tipo === 'codigo') {
+    let sql;
+    if (tipo === "codigo") {
       sql =
-        'SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor ' +
-        'FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p ' +
-        'WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND ' +
+        "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+        "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+        "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
         "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 AND a.codigo LIKE'%" +
         dato +
-        "%'"
+        "%'";
     }
 
-    if (tipo === 'descripcion') {
+    if (tipo === "descripcion") {
       sql =
-        'SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor ' +
-        'FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p ' +
-        'WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND ' +
+        "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+        "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+        "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
         "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1 AND a.descripcion LIKE '%" +
         dato +
-        "%'"
+        "%'";
     }
 
-    const datos = await pool.query(sql)
+    const datos = await pool.query(sql);
     if (datos.length > 0) {
-      res.status(200).send(datos)
-    } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function consultarPrecios (req, res) {
-  res.setHeader('Content-Type', 'application/json')
+async function consultarPrecios(req, res) {
+  res.setHeader("Content-Type", "application/json");
 
-  const { id } = req.params
+  const { id } = req.params;
   try {
     const datos = await pool.query(
-      'SELECT p.*, l.nombre as nombre FROM precios p, listasprecios l ' +
-        'WHERE p.idlistaprecios = l.idlistaprecios AND idarticulo=?',
+      "SELECT p.*, l.nombre as nombre FROM precios p, listasprecios l " +
+        "WHERE p.idlistaprecios = l.idlistaprecios AND idarticulo=?",
       [id]
-    )
+    );
 
     if (datos.length > 0) {
-      res.status(200).send(datos)
-    } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
+      res.status(200).send(datos);
+    } else res.status(201).send({ mensaje: "No Se Encontraron Resultados" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function editar (req, res) {
-  res.setHeader('Content-Type', 'application/json')
+async function editar(req, res) {
+  res.setHeader("Content-Type", "application/json");
   const {
     descripcion,
     codigo,
@@ -151,16 +150,16 @@ async function editar (req, res) {
     idmarca,
     estado,
     precios,
-    idarticulo
-  } = req.body
+    idarticulo,
+  } = req.body;
 
-  const { idusuario } = req
-  const fechacreacion = new Date()
+  const { idusuario } = req;
+  const fechacreacion = new Date();
 
   try {
     let datos = await pool.query(
-      'UPDATE articulos SET descripcion=?, codigo=?,idtarifaiva=?, idgrupo=?,idsubgrupo=?,idmarca=?,' +
-        'estado=? WHERE idarticulo=?',
+      "UPDATE articulos SET descripcion=?, codigo=?,idtarifaiva=?, idgrupo=?,idsubgrupo=?,idmarca=?," +
+        "estado=? WHERE idarticulo=?",
       [
         descripcion,
         codigo,
@@ -169,43 +168,43 @@ async function editar (req, res) {
         idsubgrupo,
         idmarca,
         estado,
-        idarticulo
+        idarticulo,
       ]
-    )
+    );
 
     if (datos.affectedRows > 0) {
-      await precios.map(async precio => {
+      await precios.map(async (precio) => {
         if (precio.fechacreacion) {
           datos = await pool.query(
-            'UPDATE precios SET valor=? WHERE idprecio=?',
+            "UPDATE precios SET valor=? WHERE idprecio=?",
             [precio.valor, precio.id]
-          )
+          );
         } else {
           datos = await pool.query(
-            'INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)' +
-              'values(?,?,?,?,?)',
+            "INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)" +
+              "values(?,?,?,?,?)",
             [idusuario, fechacreacion, precio.valor, precio.id, idarticulo]
-          )
+          );
         }
-      })
+      });
       if (datos.affectedRows > 0) {
         datos = await pool.query(
-          'SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor ' +
-            'FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p ' +
-            'WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND ' +
-            't.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1'
-        )
-        res.status(200).send(datos)
-      } else res.status(201).send({ mensaje: 'No Se Actualizo Precios' })
-    } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
+          "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+            "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+            "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+            "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1"
+        );
+        res.status(200).send(datos);
+      } else res.status(201).send({ mensaje: "No Se Actualizo Precios" });
+    } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-async function crear (req, res) {
-  res.setHeader('Content-Type', 'application/json')
+async function crear(req, res) {
+  res.setHeader("Content-Type", "application/json");
   const {
     descripcion,
     codigo,
@@ -214,14 +213,14 @@ async function crear (req, res) {
     idsubgrupo,
     idmarca,
     estado,
-    precios
-  } = req.body
+    precios,
+  } = req.body;
 
-  const { idusuario } = req
-  const fechacreacion = new Date()
+  const { idusuario } = req;
+  const fechacreacion = new Date();
 
   try {
-    let datos = await pool.query('INSERT INTO articulos SET ?', {
+    let datos = await pool.query("INSERT INTO articulos SET ?", {
       descripcion,
       codigo,
       idtarifaiva,
@@ -230,37 +229,37 @@ async function crear (req, res) {
       idmarca,
       estado,
       idusuario,
-      fechacreacion
-    })
+      fechacreacion,
+    });
 
     if (datos.affectedRows > 0) {
-      const idarticulo = datos.insertId
-      precios.map(async precio => {
+      const idarticulo = datos.insertId;
+      precios.map(async (precio) => {
         datos = await pool.query(
-          'INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)' +
-            'values(?,?,?,?,?)',
+          "INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)" +
+            "values(?,?,?,?,?)",
           [idusuario, fechacreacion, precio.valor, precio.id, idarticulo]
-        )
-      })
+        );
+      });
       if (datos.affectedRows > 0) {
         datos = await pool.query(
-          'SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor ' +
-            'FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p ' +
-            'WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND ' +
-            't.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1'
-        )
-        res.status(200).send(datos)
+          "SELECT a.*, g.nombre as nombregrupo,s.nombre as nombresubgrupo, m.nombre as nombremarca, t.nombre as nombreTarifa,p.valor " +
+            "FROM articulos a, grupos g, subgrupos s, marcas m, tarifasiva t,precios p " +
+            "WHERE a.idgrupo = g.idgrupo AND s.idgrupo = a.idgrupo AND s.idsubgrupo = a.idsubgrupo AND m.idmarca = a.idmarca AND " +
+            "t.idtarifaiva = a.idtarifaiva AND a.idarticulo = p.idarticulo AND p.idlistaprecios = 1"
+        );
+        res.status(200).send(datos);
       }
-    } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
+    } else res.status(201).send({ mensaje: "No Se Actualizo El Campo" });
   } catch (e) {
-    res.status(501).send({ mensaje: 'Error ' + e })
-    console.log(e)
+    res.status(501).send({ mensaje: "Error " + e });
+    console.log(e);
   }
 }
 
-function error (req, res) {
-  res.setHeader('Content-Type', 'application/json')
-  res.status(404).send({ mensaje: 'Página no encontrada' })
+function error(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  res.status(404).send({ mensaje: "Página no encontrada" });
 }
 
 module.exports = {
@@ -271,5 +270,5 @@ module.exports = {
   consultarPrecios,
   consultarOrden,
   consultarVentas,
-  error
-}
+  error,
+};
