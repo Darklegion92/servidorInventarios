@@ -10,7 +10,7 @@ async function crear (req, res) {
       const resp = await pool.query(
         'INSERT INTO usuarios(usuario,password,asignacion,idrol,idsucursal,fechacreacion)' +
           ' value(?,?,?,?,?,?)  ',
-        [usuario, password, nombre, 1, sucursal, new Date()]
+        [usuario, password, nombre, 2, sucursal, new Date()]
       )
       res.status(200).send({ usuario: resp })
     } else {
