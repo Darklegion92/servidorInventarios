@@ -113,8 +113,14 @@ async function consultarnumerofacturacompra (req, res) {
 async function consultarnumerofacturaventa (req, res) {
   res.setHeader('Content-Type', 'application/json')
 
+  const { idsucursal } = req.params
+
   try {
-    const datos = await pool.query('SELECT * FROM numeracion')
+    const datos = await pool.query(
+      'SELECT * FROM numeracion where idsucursal=?',
+      [idsucursal]
+    )
+    console.log(datos)
     if (datos.length > 0) {
       res.status(200).send(datos[0])
     } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
@@ -143,7 +149,9 @@ async function consultarnumeracion (req, res) {
   res.setHeader('Content-Type', 'application/json')
 
   try {
-    const datos = await pool.query('SELECT * FROM numeracion')
+    const datos = await pool.query(
+      'SELECT n.*, s.nombre as nombresucursal FROM numeracion n, sucursales s where n.idsucursal = s.id '
+    )
 
     if (datos.length > 0) {
       res.status(200).send(datos)
@@ -273,20 +281,22 @@ async function editarnumeracion (req, res) {
     fechaautorizacion,
     fechavencimiento,
     extension,
-    idnumeracion
+    idnumeracion,
+    idsucursal
   } = req.body
 
   try {
     let datos = await pool.query(
       'UPDATE numeracion SET prefijo=?,numero=?,autorizacion=?,fechaautorizacion=?, fechavencimiento=?,' +
-        'extension=? WHERE idnumeracion=?',
+        'extension=?,idsucursal=? WHERE idnumeracion=?',
       [
         prefijo,
         numero,
         autorizacion,
         fechaautorizacion,
         fechavencimiento,
-        extension,
+        1,
+        idsucursal,
         idnumeracion
       ]
     )
@@ -403,7 +413,8 @@ async function crearnumeracion (req, res) {
     autorizacion,
     fechaautorizacion,
     fechavencimiento,
-    extension
+    extension,
+    idsucursal
   } = req.body
   const { idusuario } = req
   const fechacreacion = new Date()
@@ -415,13 +426,16 @@ async function crearnumeracion (req, res) {
       autorizacion,
       fechaautorizacion,
       fechavencimiento,
-      extension,
+      extension: 1,
       fechacreacion,
-      idusuario
+      idusuario,
+      idsucursal
     })
 
     if (datos.affectedRows > 0) {
-      datos = await pool.query('SELECT * FROM numeracion')
+      datos = await pool.query(
+        'SELECT n.*, s.nombre as nombresucursal FROM numeracion n, sucursales s where s.id=n.idsucursal'
+      )
       res.status(200).send(datos)
     } else res.status(201).send({ mensaje: 'No Se Actualizo El Campo' })
   } catch (e) {
