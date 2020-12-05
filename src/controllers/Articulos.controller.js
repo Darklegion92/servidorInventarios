@@ -180,17 +180,19 @@ async function editar (req, res) {
 
     if (datos.affectedRows > 0) {
       await precios.map(async precio => {
-        if (precio.id) {
+        if (precio.editado) {
           datos = await pool.query(
             'UPDATE precios SET valor=? WHERE idprecio=?',
             [precio.valor, precio.id]
           )
         } else {
-          datos = await pool.query(
-            'INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)' +
-              'values(?,?,?,?,?)',
-            [idusuario, fechacreacion, precio.valor, precio.id, idarticulo]
-          )
+          if (precio.idprecio) {
+          } else
+            datos = await pool.query(
+              'INSERT INTO precios (idusuario,fechacreacion,valor,idlistaprecios,idarticulo)' +
+                'values(?,?,?,?,?)',
+              [idusuario, fechacreacion, precio.valor, precio.id, idarticulo]
+            )
         }
       })
       if (datos.affectedRows > 0) {

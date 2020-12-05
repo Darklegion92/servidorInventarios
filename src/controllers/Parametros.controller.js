@@ -120,7 +120,7 @@ async function consultarnumerofacturaventa (req, res) {
       'SELECT * FROM numeracion where idsucursal=?',
       [idsucursal]
     )
-    console.log(datos)
+
     if (datos.length > 0) {
       res.status(200).send(datos[0])
     } else res.status(201).send({ mensaje: 'No Se Encontraron Resultados' })
