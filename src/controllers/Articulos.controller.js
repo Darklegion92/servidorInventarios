@@ -29,7 +29,7 @@ async function consultarOrden (req, res) {
 
     if (tipo === 'codigo') {
       sql =
-        'SELECT a.*, t.tarifa as tarifaFROM articulos a, tarifasiva t ' +
+        'SELECT a.*, t.tarifa as tarifa FROM articulos a, tarifasiva t ' +
         "WHERE t.idtarifaiva = a.idtarifaiva AND a.codigo =' " +
         dato +
         "'"
