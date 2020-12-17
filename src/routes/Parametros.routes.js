@@ -9,7 +9,7 @@ router
   .get("/bodegas", Auth.isAuth, ParametrosCtrl.consultarbodegas)
   .get("/ordenes/numero", Auth.isAuth, ParametrosCtrl.consultarnumeroorden)
   .get(
-    "/facturasventa/numero",
+    '/facturasventa/numero/:idsucursal',
     Auth.isAuth,
     ParametrosCtrl.consultarnumerofacturaventa
   )
