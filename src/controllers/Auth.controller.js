@@ -8,19 +8,11 @@ async function crear(req, res) {
   try {
     if (password) {
       const resp = await pool.query(
-<<<<<<< HEAD
         "INSERT INTO usuarios(usuario,password,asignacion,idrol,idsucursal,fechacreacion)" +
           " value(?,?,?,?,?,?)  ",
         [usuario, password, nombre, rol, sucursal, new Date()]
       );
       res.status(200).send({ usuario: resp });
-=======
-        'INSERT INTO usuarios(usuario,password,asignacion,idrol,idsucursal,fechacreacion)' +
-          ' value(?,?,?,?,?,?)  ',
-        [usuario, password, nombre, 2, sucursal, new Date()]
-      )
-      res.status(200).send({ usuario: resp })
->>>>>>> f43765254e8694d05fe0665f97df7f587ddaec01
     } else {
       const resp = await pool.query(
         "UPDATE usuarios SET usuario =?, asignacion=?," +
