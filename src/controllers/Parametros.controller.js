@@ -378,11 +378,13 @@ async function crearbodega (req, res) {
 async function crearsucursal (req, res) {
   res.setHeader('Content-Type', 'application/json')
   const { nombre } = req.body
+const {idusuario} = req
   const fechacreacion = new Date()
 
   try {
     let datos = await pool.query('INSERT INTO sucursales SET ?', {
       nombre,
+idusuario,
       fechacreacion
     })
 
